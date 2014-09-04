@@ -659,6 +659,8 @@
 			clocks = <&apb2_gates 0>;
 			resets = <&apb2_rst 0>;
 			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
 		};
 
 		i2c1: i2c@01c2b000 {
@@ -668,6 +670,8 @@
 			clocks = <&apb2_gates 1>;
 			resets = <&apb2_rst 1>;
 			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
 		};
 
 		i2c2: i2c@01c2b400 {
@@ -677,6 +681,8 @@
 			clocks = <&apb2_gates 2>;
 			resets = <&apb2_rst 2>;
 			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
 		};
 
 		i2c3: i2c@01c2b800 {
@@ -686,6 +692,8 @@
 			clocks = <&apb2_gates 3>;
 			resets = <&apb2_rst 3>;
 			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
 		};
 
 		gmac: ethernet@01c30000 {
