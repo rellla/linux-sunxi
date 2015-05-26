@@ -69,6 +69,7 @@ module_param(g_dev_major, int, S_IRUGO);//S_IRUGO represent that g_dev_major can
 module_param(g_dev_minor, int, S_IRUGO);
 
 #define VE_IRQ_NO (SW_INT_IRQNO_VE)
+#define VE_CMA_SIZE (190)
 
 struct clk *ve_moduleclk = NULL;
 struct clk *ve_pll4clk = NULL;
@@ -931,7 +932,7 @@ static int __init cedardev_init(void)
 #ifdef CONFIG_CMA
 	/* If having CMA enabled, just rely on CMA for memory allocation */
 	resource_size_t pa;
-	ve_size = 80 * SZ_1M;
+	ve_size = VE_CMA_SIZE * SZ_1M;
 	ve_start_virt = dma_alloc_coherent(NULL, ve_size, &pa,
 							GFP_KERNEL | GFP_DMA);
 	if (!ve_start_virt) {
