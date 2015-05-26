@@ -148,15 +148,14 @@ static inline __s32 Hal_Set_Frame(__u32 sel, __u32 tcon_index, __u32 id)
 		return DIS_FAIL;
 	}
 
-	if (g_video[sel][id].display_cnt == 0) {
-		g_video[sel][id].pre_frame_addr0 =
-		    g_video[sel][id].video_cur.addr[0];
-		memcpy(&g_video[sel][id].video_cur, &g_video[sel][id].video_new,
-		       sizeof(__disp_video_fb_t));
+	if (g_video[sel][id].display_cnt == 0)
+	{
+		g_video[sel][id].pre_frame_addr0 = g_video[sel][id].video_cur.addr[0];
+		memcpy(&g_video[sel][id].video_cur, &g_video[sel][id].video_new, sizeof(__disp_video_fb_t));
 	}
 
-	if (gdisp.screen[sel].layer_manage[id].para.mode ==
-	    DISP_LAYER_WORK_MODE_SCALER) {
+	if (gdisp.screen[sel].layer_manage[id].para.mode == DISP_LAYER_WORK_MODE_SCALER)
+	{
 		__u32 status, scaler_index;
 		__scal_buf_addr_t scal_addr;
 		__scal_src_size_t in_size;
@@ -174,12 +173,12 @@ static inline __s32 Hal_Set_Frame(__u32 sel, __u32 tcon_index, __u32 id)
 
 		scaler = &(gdisp.scaler[scaler_index]);
 
-		if (g_video[sel][id].video_cur.interlace == TRUE) {
+		if (g_video[sel][id].video_cur.interlace == TRUE)
+		{
 			if ((!sunxi_is_sun5i()) &&
-			    (!(gdisp.screen[sel].de_flicker_status &
-			       DE_FLICKER_USED)) &&
-			    (scaler->in_fb.format == DISP_FORMAT_YUV420 &&
-			     scaler->in_fb.mode == DISP_MOD_MB_UV_COMBINED))
+			    (!(gdisp.screen[sel].de_flicker_status & DE_FLICKER_USED)) &&
+			    (scaler->in_fb.format == DISP_FORMAT_YUV420) &&
+			    (scaler->in_fb.mode == DISP_MOD_MB_UV_COMBINED))
 				g_video[sel][id].dit_enable = TRUE;
 			else
 				g_video[sel][id].dit_enable = FALSE;
@@ -189,54 +188,53 @@ static inline __s32 Hal_Set_Frame(__u32 sel, __u32 tcon_index, __u32 id)
 			else
 				g_video[sel][id].fetch_field = TRUE;
 
-			if (g_video[sel][id].display_cnt == 0) {
-				g_video[sel][id].fetch_bot =
-					(g_video[sel][id].video_cur.
-					 top_field_first) ? 0 : 1;
-			} else {
-				g_video[sel][id].fetch_bot =
-					(g_video[sel][id].video_cur.
-					 top_field_first) ? 1 : 0;
-			}
+			if (g_video[sel][id].display_cnt == 0)
+				g_video[sel][id].fetch_bot = (g_video[sel][id].video_cur.top_field_first) ? 0 : 1;
+			else
+				g_video[sel][id].fetch_bot = (g_video[sel][id].video_cur.top_field_first) ? 1 : 0;
 
-			if (g_video[sel][id].dit_enable == TRUE) {
-				if (g_video[sel][id].video_cur.maf_valid ==
-				    TRUE) {
-					g_video[sel][id].dit_mode =
-						DIT_MODE_MAF;
-					maf_flag_addr = __phys_to_bus(g_video[sel][id].video_cur.flag_addr);
-					maf_linestride =
-						g_video[sel][id].video_cur.
-						flag_stride;
-				} else {
-					g_video[sel][id].dit_mode =
-						DIT_MODE_MAF_BOB;
-				}
-
-				if (g_video[sel][id].video_cur.
-				    pre_frame_valid == TRUE) {
-					g_video[sel][id].tempdiff_en = TRUE;
-					pre_frame_addr = __phys_to_bus(g_video[sel][id].pre_frame_addr0);
-				} else {
-					g_video[sel][id].tempdiff_en = FALSE;
-				}
+			if (g_video[sel][id].dit_enable == TRUE)
+			{
+				g_video[sel][id].tempdiff_en = FALSE;
 				g_video[sel][id].diagintp_en = TRUE;
-				if (sunxi_is_sun5i()) {
-					g_video[sel][id].fetch_field = FALSE;	//todo
-					g_video[sel][id].fetch_bot = 0;	//todo
-					// todo
+
+				if (g_video[sel][id].video_cur.maf_valid == TRUE)
+				{
 					g_video[sel][id].dit_mode = DIT_MODE_MAF_BOB;
-					g_video[sel][id].diagintp_en = FALSE;	//todo
+					maf_flag_addr = __phys_to_bus(g_video[sel][id].video_cur.flag_addr);
+					maf_linestride = g_video[sel][id].video_cur.flag_stride;
+
+					if (g_video[sel][id].video_cur.pre_frame_valid == TRUE)
+					{
+						g_video[sel][id].dit_mode = DIT_MODE_MAF;
+						g_video[sel][id].tempdiff_en = TRUE;
+						pre_frame_addr = __phys_to_bus(g_video[sel][id].pre_frame_addr0);
+					}
+
 				}
-				g_video[sel][id].tempdiff_en = FALSE;	//todo
-			} else {
+				else
+					g_video[sel][id].dit_mode = DIT_MODE_BOB;
+
+				if (sunxi_is_sun5i())
+				{
+					g_video[sel][id].dit_mode = DIT_MODE_WEAVE;
+					g_video[sel][id].fetch_field = FALSE;
+					g_video[sel][id].fetch_bot = 0;
+					g_video[sel][id].diagintp_en = FALSE;
+				}
+
+			}
+			else
+			{
 				if (sunxi_is_sun5i())
 					g_video[sel][id].fetch_bot = FALSE;
 				g_video[sel][id].dit_mode = DIT_MODE_WEAVE;
 				g_video[sel][id].tempdiff_en = FALSE;
 				g_video[sel][id].diagintp_en = FALSE;
 			}
-		} else {
+		}
+		else
+		{
 			g_video[sel][id].dit_enable = FALSE;
 			g_video[sel][id].fetch_field = FALSE;
 			g_video[sel][id].fetch_bot = FALSE;
