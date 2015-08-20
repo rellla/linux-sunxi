@@ -30,6 +30,7 @@ void *disp_malloc(__u32 num_bytes);
 void disp_free(void *p);
 
 __s32 DRV_disp_int_process(__u32 sel);
+__s32 DRV_disp_vsync_event(__u32 sel);
 
 __s32 DRV_DISP_Init(void);
 __s32 DRV_DISP_Exit(void);

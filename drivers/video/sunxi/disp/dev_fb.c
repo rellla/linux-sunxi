@@ -1336,6 +1336,21 @@ __s32 DRV_disp_int_process(__u32 sel)
 	return 0;
 }
 
+__s32 DRV_disp_vsync_event(__u32 sel)
+{
+	g_fbi.vsync_timestamp[sel] = ktime_get();
+
+	return 0;
+}
+
+__s64 BSP_disp_vsync_get(__u32 sel)
+{
+	if (gdisp.screen[sel].vsync_event_en)
+		return ktime_to_ns(g_fbi.vsync_timestamp[sel]);
+
+	return -1;
+}
+
 #ifdef CONFIG_FB_SUNXI_UMP
 int (*disp_get_ump_secure_id) (struct fb_info *info, fb_info_t *g_fbi,
 			       unsigned long arg, int buf);

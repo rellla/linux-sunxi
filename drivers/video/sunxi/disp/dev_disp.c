@@ -304,6 +304,7 @@ __s32 DRV_DISP_Init(void)
 	para.base_pioc = (__u32) g_fbi.base_pioc;
 	para.base_pwm = (__u32) g_fbi.base_pwm;
 	para.disp_int_process = DRV_disp_int_process;
+	para.vsync_event = DRV_disp_vsync_event;
 
 	memset(&g_disp_drv, 0, sizeof(struct __disp_drv_t));
 
@@ -925,6 +926,23 @@ static long disp_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			}
 
 			ret = BSP_disp_iep_set_demo_win(ubuffer[0], 2, &para);
+			break;
+		}
+
+	case DISP_CMD_VSYNC_EVENT_EN:
+		ret = BSP_disp_vsync_event_enable(ubuffer[0], ubuffer[1]);
+		break;
+
+	case DISP_CMD_VSYNC_GET:
+		{
+			__s64 timestamp;
+
+			timestamp = BSP_disp_vsync_get(ubuffer[0]);
+			if (copy_to_user((void __user *)ubuffer[1], &timestamp,
+					 sizeof(__s64))) {
+				__wrn("copy_to_user fail\n");
+				return -EFAULT;
+			}
 			break;
 		}
 

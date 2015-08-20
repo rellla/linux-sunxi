@@ -84,6 +84,7 @@ typedef struct {
 	 __s32(*hdmi_get_HPD_status) (void);
 	 __s32(*hdmi_set_pll) (__u32 pll, __u32 clk);
 	 __s32(*disp_int_process) (__u32 sel);
+	 __s32(*vsync_event) (__u32 sel);
 } __disp_bsp_init_para;
 
 extern __s32 BSP_disp_clk_on(__u32 type);
@@ -124,6 +125,8 @@ extern __s32 BSP_disp_set_screen_size(__u32 sel, __disp_rectsz_t *size);
 extern __s32 BSP_disp_set_output_csc(__u32 sel, __disp_output_type_t type,
 				     __u32 drc_en);
 extern __s32 BSP_disp_de_flicker_enable(__u32 sel, __bool b_en);
+extern __s32 BSP_disp_vsync_event_enable(__u32 sel, __bool enable);
+extern __s64 BSP_disp_vsync_get(__u32 sel);
 extern __s32 BSP_disp_layer_request(__u32 sel, __disp_layer_work_mode_t mode);
 extern __s32 BSP_disp_layer_release(__u32 sel, __u32 hid);
 extern __s32 BSP_disp_layer_open(__u32 sel, __u32 hid);

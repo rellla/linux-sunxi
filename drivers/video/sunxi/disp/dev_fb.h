@@ -59,6 +59,7 @@ typedef struct {
 #endif
 	/* screen_base address, allocated with disp_malloc() */
 	void *malloc_screen_base[SUNXI_MAX_FB];
+	ktime_t vsync_timestamp[2];
 } fb_info_t;
 
 extern fb_info_t g_fbi;
