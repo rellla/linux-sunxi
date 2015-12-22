@@ -21,10 +21,11 @@
 #include "dev_hdmi.h"
 #include "drv_hdmi_i.h"
 #include "../disp/dev_disp.h"
+#include "hdmi_cec.h"
 
 static struct cdev *my_cdev;
 static dev_t devid;
-static struct class *hdmi_class;
+struct class *hdmi_class;
 
 hdmi_info_t ghdmi;
 
@@ -168,12 +169,17 @@ hdmi_module_init(void)
 	if (ret == 0)
 		ret = platform_driver_register(&hdmi_driver);
 
+	if (ret == 0)
+		ret = sunxi_cec_init();
+
 	return ret;
 }
 
 static void __exit hdmi_module_exit(void)
 {
 	__inf("hdmi_module_exit\n");
+
+	sunxi_cec_exit();
 
 	platform_driver_unregister(&hdmi_driver);
 	platform_device_unregister(&hdmi_device);

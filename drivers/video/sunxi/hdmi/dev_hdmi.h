@@ -30,4 +30,6 @@ typedef struct {
 
 extern hdmi_info_t ghdmi;
 
+extern struct class *hdmi_class;
+
 #endif

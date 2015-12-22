@@ -21,7 +21,6 @@
 #include <plat/system.h>
 #include "../disp/sunxi_disp_regs.h"
 #include "../disp/OSAL_Clock.h"
-#include "hdmi_cec.h"
 #include "hdmi_core.h"
 
 static char *audio;
@@ -133,8 +132,6 @@ __s32 hdmi_main_task_loop(void)
 		hdmi_state = HDMI_State_Wait_Hpd;
 	}
 
-	hdmi_cec_task_loop();
-
 	/* ? where did all the breaks run off to? --libv */
 	switch (hdmi_state) {
 	case HDMI_State_Wait_Hpd:
@@ -160,9 +157,6 @@ __s32 hdmi_main_task_loop(void)
 
 		ParseEDID();
 		readl(HDMI_I2C_UNKNOWN_1);
-
-		if (!cec_standby)
-			cec_count = 100;
 
 		if (audio_edid && Device_Support_VIC[HDMI_EDID]) {
 			if (audio_info.supported_rates)

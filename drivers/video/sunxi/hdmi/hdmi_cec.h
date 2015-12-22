@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007-2012 Allwinner Technology Co., Ltd.
- *
+ * Copyright (C) 2015 Joachim Damm
+ *.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
@@ -8,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.> See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -17,75 +18,58 @@
  * MA 02111-1307 USA
  */
 
-#include "drv_hdmi_i.h"
+#ifndef __HDMI_CEC__
+#define __HDMI_CEC__
+
+
+#define DEVICE_NAME "CEC"
+#define CLASS_NAME "cec"
+ 
+#define AUTHOR "Joachim Damm <dammj@gmx.de>"
+#define DESCRIPTION "CEC device driver for sunxi"
+#define VERSION "0.1"
+ 
+/* We'll use our own macros for printk */
+#define dbg(format, arg...) do { if (debug) pr_info(CLASS_NAME ": %s: " format, __FUNCTION__, ## arg); } while (0)
+#define err(format, arg...) pr_err(CLASS_NAME ": " format, ## arg)
+#define info(format, arg...) pr_info(CLASS_NAME ": " format, ## arg)
+#define warn(format, arg...) pr_warn(CLASS_NAME ": " format, ## arg)
 
 /* time us */
 #define HDMI_CEC_START_BIT_LOW_TIME 3700
 #define HDMI_CEC_START_BIT_WHOLE_TIME 4500
-
-#define HDMI_CEC_DATA_BIT0_LOW_TIIME 1500
+#define HDMI_CEC_DATA_BIT0_LOW_TIME 1500
 #define HDMI_CEC_DATA_BIT1_LOW_TIME  600
 #define HDMI_CEC_DATA_BIT_WHOLE_TIME 2400
 /* ack */
 #define HDMI_CEC_NORMAL_MSG_ACK 0X0
 #define HDMI_CEC_BROADCAST_MSG_ACK 0X1
 
-enum __hdmi_cec_opcode {
-	HDMI_CEC_OP_IMAGE_VIEW_ON = 0X04,
-	HDMI_CEC_OP_TEXT_VIEW_ON = 0X0D,
-	HDMI_CEC_OP_STANDBY = 0X36,
-	HDMI_CEC_OP_SET_OSD_NAME = 0X47,
-	HDMI_CEC_OP_ROUTING_CHANGE = 0X80,
-	HDMI_CEC_OP_ACTIVE_SOURCE = 0X82,
-	HDMI_CEC_OP_REPORT_PHY_ADDRESS = 0X84,
-	HDMI_CEC_OP_DEVICE_VENDOR_ID = 0X87,
-	HDMI_CEC_OP_MENU_STATE = 0X8E,
-	HDMI_CEC_OP_REQUEST_POWER_STATUS = 0X8F,
-	HDMI_CEC_OP_REPORT_POWER_STATUS = 0X90,
-	HDMI_CEC_OP_INACTIVE_SOURCE = 0X9D,
-	HDMI_CEC_OP_NUM = 0xff,
-};
+#define SIG_LO 0X0
+#define SIG_HI 0X1
 
 enum __hdmi_cec_logical_address {
-	HDMI_CEC_LADDR_TV,
-	HDMI_CEC_LADDR_RECORDER1,
-	HDMI_CEC_LADDR_RECORDER2,
-	HDMI_CEC_LADDR_TUNER1,
-	HDMI_CEC_LADDR_PAYER1,
-	HDMI_CEC_LADDR_AUDIO,
-	HDMI_CEC_LADDR_TUNER2,
-	HDMI_CEC_LADDR_TUNER3,
-	HDMI_CEC_LADDR_PAYER2,
-	HDMI_CEC_LADDR_RECORDER3,
-	HDMI_CEC_LADDR_TUNER4,
-	HDMI_CEC_LADDR_PAYER3,
-	HDMI_CEC_LADDR_RESERVED1,
-	HDMI_CEC_LADDR_RESERVED2,
-	HDMI_CEC_LADDR_SPECIFIC,
-	HDMI_CEC_LADDR_BROADCAST,
+    HDMI_CEC_LADDR_TV,
+    HDMI_CEC_LADDR_RECORDER1,
+    HDMI_CEC_LADDR_RECORDER2,
+    HDMI_CEC_LADDR_TUNER1,
+    HDMI_CEC_LADDR_PLAYER1,
+    HDMI_CEC_LADDR_AUDIO,
+    HDMI_CEC_LADDR_TUNER2,
+    HDMI_CEC_LADDR_TUNER3,
+    HDMI_CEC_LADDR_PLAYER2,
+    HDMI_CEC_LADDR_RECORDER3,
+    HDMI_CEC_LADDR_TUNER4,
+    HDMI_CEC_LADDR_PLAYER3,
+    HDMI_CEC_LADDR_RESERVED1,
+    HDMI_CEC_LADDR_RESERVED2,
+    HDMI_CEC_LADDR_SPECIFIC,
+    HDMI_CEC_LADDR_BROADCAST,
 };
 
-enum __hdmi_cec_msg_eom {
-	HDMI_CEC_MSG_MORE, HDMI_CEC_MSG_END,
-};
+extern unsigned int cec_phy_addr;
 
-struct __hdmi_cec_msg_t {
-	enum __hdmi_cec_logical_address initiator_addr;
-	enum __hdmi_cec_logical_address follower_addr;
-	__u32 opcode_valid; /* indicate there is opcode or not */
-	enum __hdmi_cec_opcode opcode;
-	__u32 para[14];   /* byte */
-	__u32 para_num;   /* byte < 16byte */
-};
+int sunxi_cec_init(void);
+void sunxi_cec_exit(void);
 
-extern __bool cec_enable;
-extern __bool cec_standby;
-extern __u32 cec_phy_addr;
-extern __u32 cec_logical_addr;
-extern __u8 cec_count;
-extern __u32 cec_phy_addr;
-
-__s32 hdmi_cec_test(void);
-__s32 hdmi_cec_send_msg(struct __hdmi_cec_msg_t *msg);
-__s32 hdmi_cec_receive_msg(struct __hdmi_cec_msg_t *msg);
-void hdmi_cec_task_loop(void);
+#endif
