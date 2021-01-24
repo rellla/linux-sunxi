@@ -178,7 +178,7 @@ int lima_devfreq_init(struct lima_device *ldev)
 	dev_pm_opp_put(opp);
 
 	devfreq = devm_devfreq_add_device(dev, &lima_devfreq_profile,
-					  DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
+					  DEVFREQ_GOV_PERFORMANCE, NULL);
 	if (IS_ERR(devfreq)) {
 		dev_err(dev, "Couldn't initialize GPU devfreq\n");
 		ret = PTR_ERR(devfreq);
